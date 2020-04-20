@@ -28,6 +28,9 @@
                     <li>
                         <n:a href="/action/projectUpload">プロジェクト一括登録</n:a>
                     </li>
+                    <li>
+                        <n:a href="/action/redisTest/index">Redisテスト</n:a>
+                    </li>
                 </ul>
             </div>
         </div>

@@ -51,6 +51,12 @@
   <dependencies>
 
     <dependency>
+      <groupId>io.lettuce</groupId>
+      <artifactId>lettuce-core</artifactId>
+      <version>5.2.2.RELEASE</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.nablarch.configuration</groupId>
       <artifactId>nablarch-main-default-configuration</artifactId>
     </dependency>

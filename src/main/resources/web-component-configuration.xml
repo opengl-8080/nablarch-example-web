@@ -152,6 +152,23 @@
       </list>
     </property>
   </component>
+  
+  
+  <component name="redisClient" class="com.nablarch.example.redis.lettuce.LettuceRedisClient">
+    <property name="keyCodec">
+      <component class="com.nablarch.example.redis.NablarchRedisStringCodec">
+        <property name="charset" value="UTF-8" />
+      </component>
+    </property>
+    
+    <property name="valueCodec">
+      <component class="com.nablarch.example.redis.NablarchRedisByteArrayCodec" />
+    </property>
+    
+    <property name="uri" value="redis://redis:6379" />
+    <property name="commandTimeout" value="60000" />
+  </component>
+  
 
   <!-- 初期化が必要なコンポーネント -->
   <component name="initializer"
@@ -164,6 +181,7 @@
         <component-ref name="tokenManager"/>
         <component-ref name="packageMapping" />
         <component-ref name="jaxrsPackageMapping"/>
+        <component-ref name="redisClient"/>
       </list>
     </property>
   </component>
