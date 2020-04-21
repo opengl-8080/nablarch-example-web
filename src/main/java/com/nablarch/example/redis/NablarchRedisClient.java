@@ -2,10 +2,11 @@ package com.nablarch.example.redis;
 
 import nablarch.core.repository.initialization.Initializable;
 
-public interface NablarchRedisClient<K, V> extends Initializable {
-    void set(K key, V value);
-    V get(K key);
-    void del(K key);
+public interface NablarchRedisClient extends Initializable {
+    
+    NablarchRedisCommands<String, String> getCommands();
+
+    <K, V> NablarchRedisCommands<K, V> getCommands(NablarchRedisCodec<K> keyCodec, NablarchRedisCodec<V> valueCodec);
     
     void shutdown();
 }

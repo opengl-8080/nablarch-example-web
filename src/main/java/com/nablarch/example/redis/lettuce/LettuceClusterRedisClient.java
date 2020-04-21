@@ -2,6 +2,8 @@ package com.nablarch.example.redis.lettuce;
 
 import com.nablarch.example.redis.NablarchRedisClient;
 import com.nablarch.example.redis.NablarchRedisCodec;
+import com.nablarch.example.redis.NablarchRedisCommands;
+import com.nablarch.example.redis.NablarchRedisStringCodec;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.TimeoutOptions;
@@ -15,43 +17,25 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LettuceClusterRedisClient<K, V> implements NablarchRedisClient<K, V> {
+public class LettuceClusterRedisClient implements NablarchRedisClient {
+    private static final NablarchRedisStringCodec DEFAULT_STRING_CODEC = new NablarchRedisStringCodec("UTF-8");
+    
     private RedisClusterClient client;
     private StatefulRedisClusterConnection<byte[], byte[]> connection;
 
-    private NablarchRedisCodec<K> keyCodec;
-    private NablarchRedisCodec<V> valueCodec;
-    
     protected List<String> nodeUriList;
     protected long commandTimeout = 60_000L;
     protected long topologyRefreshDuration = 30_000L;
     protected ReadFrom readFrom = ReadFrom.REPLICA;
 
-    
-    
     @Override
-    public void set(K key, V value) {
-        connection.sync().set(keyCodec.encode(key), valueCodec.encode(value));
+    public NablarchRedisCommands<String, String> getCommands() {
+        return new LettuceClusterRedisCommands<>(connection, DEFAULT_STRING_CODEC, DEFAULT_STRING_CODEC);
     }
 
     @Override
-    public V get(K key) {
-        return valueCodec.decode(connection.sync().get(keyCodec.encode(key)));
-    }
-
-    @Override
-    public void del(K key) {
-        connection.sync().del(keyCodec.encode(key));
-    }
-
-    
-    
-    public void setKeyCodec(NablarchRedisCodec<K> keyCodec) {
-        this.keyCodec = keyCodec;
-    }
-
-    public void setValueCodec(NablarchRedisCodec<V> valueCodec) {
-        this.valueCodec = valueCodec;
+    public <K, V> NablarchRedisCommands<K, V> getCommands(NablarchRedisCodec<K> keyCodec, NablarchRedisCodec<V> valueCodec) {
+        return new LettuceClusterRedisCommands<>(connection, keyCodec, valueCodec);
     }
 
     public void setNodeUriList(List<String> nodeUriList) {

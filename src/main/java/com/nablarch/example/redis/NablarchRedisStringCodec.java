@@ -4,6 +4,14 @@ import java.nio.charset.Charset;
 
 public class NablarchRedisStringCodec implements NablarchRedisCodec<String> {
     private String charset;
+    
+    public NablarchRedisStringCodec() {
+        this(Charset.defaultCharset().name());
+    }
+    
+    public NablarchRedisStringCodec(String charset) {
+        this.charset = charset;
+    }
 
     public void setCharset(String charset) {
         this.charset = charset;
@@ -11,11 +19,11 @@ public class NablarchRedisStringCodec implements NablarchRedisCodec<String> {
 
     @Override
     public byte[] encode(String target) {
-        return target.getBytes(Charset.forName(charset));
+        return target == null ? null : target.getBytes(Charset.forName(charset));
     }
 
     @Override
     public String decode(byte[] bytes) {
-        return new String(bytes, Charset.forName(charset));
+        return bytes == null ? null : new String(bytes, Charset.forName(charset));
     }
 }

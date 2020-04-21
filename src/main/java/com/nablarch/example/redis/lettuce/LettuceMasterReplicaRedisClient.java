@@ -2,6 +2,8 @@ package com.nablarch.example.redis.lettuce;
 
 import com.nablarch.example.redis.NablarchRedisClient;
 import com.nablarch.example.redis.NablarchRedisCodec;
+import com.nablarch.example.redis.NablarchRedisCommands;
+import com.nablarch.example.redis.NablarchRedisStringCodec;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.RedisClient;
@@ -13,40 +15,25 @@ import io.lettuce.core.masterreplica.StatefulRedisMasterReplicaConnection;
 
 import java.time.Duration;
 
-public class LettuceMasterReplicaRedisClient<K, V> implements NablarchRedisClient<K, V> {
+public class LettuceMasterReplicaRedisClient implements NablarchRedisClient {
+    private static final NablarchRedisStringCodec DEFAULT_STRING_CODEC = new NablarchRedisStringCodec("UTF-8");
+    
     private RedisClient client;
     private StatefulRedisMasterReplicaConnection<byte[], byte[]> connection;
-
-    private NablarchRedisCodec<K> keyCodec;
-    private NablarchRedisCodec<V> valueCodec;
     
     protected String uri;
     protected long commandTimeout = 60_000L;
     protected ReadFrom readFrom = ReadFrom.REPLICA;
 
-    
-    @Override
-    public void set(K key, V value) {
-        connection.sync().set(keyCodec.encode(key), valueCodec.encode(value));
-    }
 
     @Override
-    public V get(K key) {
-        return valueCodec.decode(connection.sync().get(keyCodec.encode(key)));
+    public NablarchRedisCommands<String, String> getCommands() {
+        return new LettuceRedisCommands<>(connection, DEFAULT_STRING_CODEC, DEFAULT_STRING_CODEC);
     }
 
     @Override
-    public void del(K key) {
-        connection.sync().del(keyCodec.encode(key));
-    }
-
-    
-    public void setKeyCodec(NablarchRedisCodec<K> keyCodec) {
-        this.keyCodec = keyCodec;
-    }
-
-    public void setValueCodec(NablarchRedisCodec<V> valueCodec) {
-        this.valueCodec = valueCodec;
+    public <K, V> NablarchRedisCommands<K, V> getCommands(NablarchRedisCodec<K> keyCodec, NablarchRedisCodec<V> valueCodec) {
+        return new LettuceRedisCommands<>(connection, keyCodec, valueCodec);
     }
 
     public void setUri(String uri) {

@@ -51,9 +51,6 @@
 
   <!-- カスタムタグ設定 -->
   <import file="com/nablarch/example/app/web/webui/nablarch-tag.xml" />
-
-  <!-- 二重サブミット防止機能 -->
-  <import file="com/nablarch/example/app/web/webui/double-submission.xml" />
   
   <!-- hidden暗号化機能を使用しないリクエストID -->
   <list name="noHiddenEncryptionRequestIds">
@@ -64,14 +61,10 @@
 
   <!-- セッションストア機能 -->
   <import file="nablarch/webui/session-store.xml" />
-  <import file="com/nablarch/example/app/web/webui/session-store.xml" />
 
   <!-- ダイアレクト設定 -->
   <!-- 使用するDBに合わせてダイアレクトを設定すること -->
-  <component name="dialect" class="nablarch.core.db.dialect.H2Dialect" />
-
-  <!-- スレッドコンテキストハンドラ -->
-  <import file="nablarch/webui/threadcontext-for-webui-in-sessionstore.xml"/>
+  <component name="dialect" class="nablarch.core.db.dialect.H2Dialect" /> 
 
   <!-- ハンドラキュー構成 -->
   <component name="webFrontController"
@@ -82,8 +75,6 @@
 
         <component class="nablarch.fw.handler.GlobalErrorHandler"/>
 
-        <component class="nablarch.common.handler.threadcontext.ThreadContextClearHandler"/>
-
         <component class="nablarch.fw.web.handler.HttpResponseHandler"/>
 
         <component class="nablarch.fw.web.handler.SecureHandler" />
@@ -91,10 +82,6 @@
         <component-ref name="multipartHandler"/>
 
         <component-ref name="sessionStoreHandler" />
-
-        <component-ref name="threadContextHandler"/>
-
-        <component class="nablarch.common.web.handler.HttpAccessLogHandler"/>
 
         <component class="nablarch.fw.web.handler.NormalizationHandler">
           <property name="normalizers">
@@ -155,17 +142,7 @@
   
   
   <component name="redisClient" class="com.nablarch.example.redis.lettuce.LettuceRedisClient">
-    <property name="keyCodec">
-      <component class="com.nablarch.example.redis.NablarchRedisStringCodec">
-        <property name="charset" value="UTF-8" />
-      </component>
-    </property>
-    
-    <property name="valueCodec">
-      <component class="com.nablarch.example.redis.NablarchRedisByteArrayCodec" />
-    </property>
-    
-    <property name="uri" value="redis://redis:6379" />
+    <property name="uri" value="redis://192.168.99.100:6379" />
     <property name="commandTimeout" value="60000" />
   </component>
   
@@ -177,8 +154,6 @@
       <list>
         <!-- web/session-store.xml:DBストア-->
         <component-ref name="dbStore" />
-        <component-ref name="expiration" />
-        <component-ref name="tokenManager"/>
         <component-ref name="packageMapping" />
         <component-ref name="jaxrsPackageMapping"/>
         <component-ref name="redisClient"/>
