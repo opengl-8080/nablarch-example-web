@@ -2,6 +2,7 @@ package com.nablarch.example.app.web.action;
 
 import com.nablarch.example.redis.NablarchRedisByteArrayCodec;
 import com.nablarch.example.redis.NablarchRedisClient;
+import com.nablarch.example.redis.NablarchRedisClientProvider;
 import com.nablarch.example.redis.NablarchRedisCommands;
 import com.nablarch.example.redis.NablarchRedisStringCodec;
 import nablarch.core.log.Logger;
@@ -26,7 +27,8 @@ public class RedisTestAction {
     private static AtomicInteger counter = new AtomicInteger(0);
     
     public HttpResponse index(HttpRequest request, ExecutionContext context) {
-        final NablarchRedisClient redisClient = SystemRepository.get("redisClient");
+        final NablarchRedisClientProvider provider = SystemRepository.get("redisClientProvider");
+        final NablarchRedisClient redisClient = provider.getRedisClient();
         final NablarchRedisCommands<String, String> commands = redisClient.getCommands();
 
         final String message = commands.get("message");

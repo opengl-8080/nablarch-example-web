@@ -139,14 +139,45 @@
       </list>
     </property>
   </component>
-  
-  
-  <component name="redisClient" class="com.nablarch.example.redis.lettuce.LettuceRedisClient">
-    <property name="uri" value="redis://192.168.99.100:6379" />
-    <property name="commandTimeout" value="60000" />
+
+  <!-- ここから -->
+  <component name="lettuceSimpleRedisClient" class="com.nablarch.example.redis.lettuce.LettuceSimpleRedisClient">
+    <property name="uri" value="${nablarch.redis.lettuce.uri}" />
+    <property name="commandTimeout" value="${nablarch.redis.lettuce.commandTimeout}" />
+  </component>
+
+  <component name="lettuceMasterReplicaRedisClient" class="com.nablarch.example.redis.lettuce.LettuceMasterReplicaRedisClient">
+    <property name="uri" value="${nablarch.redis.lettuce.uri}" />
+    <property name="commandTimeout" value="${nablarch.redis.lettuce.commandTimeout}" />
+    <property name="readFrom" value="${nablarch.redis.lettuce.readFrom}" />
+  </component>
+
+  <component name="lettuceClusterRedisClient" class="com.nablarch.example.redis.lettuce.LettuceClusterRedisClient">
+    <property name="nodeUris" value="${nablarch.redis.lettuce.nodeUris}" />
+    <property name="commandTimeout" value="${nablarch.redis.lettuce.commandTimeout}" />
+    <property name="readFrom" value="${nablarch.redis.lettuce.readFrom}" />
+    <property name="topologyRefreshDuration" value="${nablarch.redis.lettuce.topologyRefreshDuration}" />
   </component>
   
+  <component name="redisClientProvider" class="com.nablarch.example.redis.NablarchRedisClientProvider">
+    <property name="clientType" value="${nablarch.redis.clientType}" />
+    
+    <property name="redisClientList">
+      <list>
+        <component-ref name="lettuceSimpleRedisClient" />
+        <component-ref name="lettuceMasterReplicaRedisClient" />
+        <component-ref name="lettuceClusterRedisClient" />
+      </list>
+    </property>
+  </component>
+  <!-- ここまでは adaptor に含める -->
 
+  <!-- 上書き用 -->
+<!--  <component name="lettuceSimpleRedisClient" class="com.nablarch.example.redis.lettuce.LettuceSimpleRedisClient">-->
+<!--    <property name="uri" value="redis://redis:6380" />-->
+<!--    <property name="commandTimeout" value="60000" />-->
+<!--  </component>-->
+  
   <!-- 初期化が必要なコンポーネント -->
   <component name="initializer"
              class="nablarch.core.repository.initialization.BasicApplicationInitializer">
@@ -156,7 +187,7 @@
         <component-ref name="dbStore" />
         <component-ref name="packageMapping" />
         <component-ref name="jaxrsPackageMapping"/>
-        <component-ref name="redisClient"/>
+        <component-ref name="redisClientProvider"/>
       </list>
     </property>
   </component>

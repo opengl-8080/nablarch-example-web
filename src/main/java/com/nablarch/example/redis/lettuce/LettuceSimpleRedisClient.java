@@ -1,6 +1,5 @@
 package com.nablarch.example.redis.lettuce;
 
-import com.nablarch.example.redis.NablarchRedisClient;
 import com.nablarch.example.redis.NablarchRedisCodec;
 import com.nablarch.example.redis.NablarchRedisCommands;
 import com.nablarch.example.redis.NablarchRedisStringCodec;
@@ -12,14 +11,17 @@ import io.lettuce.core.codec.ByteArrayCodec;
 
 import java.time.Duration;
 
-public class LettuceRedisClient implements NablarchRedisClient {
-    private static final NablarchRedisStringCodec DEFAULT_STRING_CODEC = new NablarchRedisStringCodec("UTF-8");
+public class LettuceSimpleRedisClient extends AbstractLettuceRedisClient {
     
     private RedisClient client;
     private StatefulRedisConnection<byte[], byte[]> connection;
 
     protected String uri;
     protected long commandTimeout;
+
+    public LettuceSimpleRedisClient() {
+        super("simple");
+    }
 
     @Override
     public NablarchRedisCommands<String, String> getCommands() {
@@ -69,5 +71,13 @@ public class LettuceRedisClient implements NablarchRedisClient {
     public void shutdown() {
         connection.close();
         client.shutdown();
+    }
+
+    @Override
+    public String toString() {
+        return "LettuceSimpleRedisClient{" +
+                ", uri='" + uri + '\'' +
+                ", commandTimeout=" + commandTimeout +
+                '}';
     }
 }

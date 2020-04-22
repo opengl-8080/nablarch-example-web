@@ -1,9 +1,7 @@
 package com.nablarch.example.redis.lettuce;
 
-import com.nablarch.example.redis.NablarchRedisClient;
 import com.nablarch.example.redis.NablarchRedisCodec;
 import com.nablarch.example.redis.NablarchRedisCommands;
-import com.nablarch.example.redis.NablarchRedisStringCodec;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.TimeoutOptions;
@@ -17,16 +15,19 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LettuceClusterRedisClient implements NablarchRedisClient {
-    private static final NablarchRedisStringCodec DEFAULT_STRING_CODEC = new NablarchRedisStringCodec("UTF-8");
-    
+public class LettuceClusterRedisClient extends AbstractLettuceRedisClient {
     private RedisClusterClient client;
     private StatefulRedisClusterConnection<byte[], byte[]> connection;
 
     protected List<String> nodeUriList;
+    protected String nodeUris;
     protected long commandTimeout = 60_000L;
     protected long topologyRefreshDuration = 30_000L;
     protected ReadFrom readFrom = ReadFrom.REPLICA;
+
+    public LettuceClusterRedisClient() {
+        super("cluster");
+    }
 
     @Override
     public NablarchRedisCommands<String, String> getCommands() {

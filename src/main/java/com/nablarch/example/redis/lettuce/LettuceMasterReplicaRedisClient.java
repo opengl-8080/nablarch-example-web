@@ -1,9 +1,7 @@
 package com.nablarch.example.redis.lettuce;
 
-import com.nablarch.example.redis.NablarchRedisClient;
 import com.nablarch.example.redis.NablarchRedisCodec;
 import com.nablarch.example.redis.NablarchRedisCommands;
-import com.nablarch.example.redis.NablarchRedisStringCodec;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.RedisClient;
@@ -15,9 +13,7 @@ import io.lettuce.core.masterreplica.StatefulRedisMasterReplicaConnection;
 
 import java.time.Duration;
 
-public class LettuceMasterReplicaRedisClient implements NablarchRedisClient {
-    private static final NablarchRedisStringCodec DEFAULT_STRING_CODEC = new NablarchRedisStringCodec("UTF-8");
-    
+public class LettuceMasterReplicaRedisClient extends AbstractLettuceRedisClient {
     private RedisClient client;
     private StatefulRedisMasterReplicaConnection<byte[], byte[]> connection;
     
@@ -25,6 +21,9 @@ public class LettuceMasterReplicaRedisClient implements NablarchRedisClient {
     protected long commandTimeout = 60_000L;
     protected ReadFrom readFrom = ReadFrom.REPLICA;
 
+    public LettuceMasterReplicaRedisClient() {
+        super("masterReplica");
+    }
 
     @Override
     public NablarchRedisCommands<String, String> getCommands() {
